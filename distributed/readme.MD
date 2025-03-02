@@ -55,8 +55,8 @@ python -u -m torch.distributed.run \
 
 ### TIR Slurm Cluster
 
-Copy all_reduce.py and all_reduce.slurm to /shared/nccl-slurm folder on the cluster. 
-Change directory to /shared/nccl-slurm
-Run the slurm script with sbatch: sbatch all_reduce.slurm 
-See job progress: squeue
-Review results from the output file created by slurm in the same folder 
+- Copy all_reduce.py and all_reduce.slurm to /shared/nccl-slurm folder on the cluster. 
+- Change directory to /shared/nccl-slurm
+- Run the slurm script with sbatch: sbatch all_reduce.slurm 
+- See job progress: squeue
+- Review results from the output file created by slurm in the same folder 
