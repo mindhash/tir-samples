@@ -1,16 +1,14 @@
 #!/bin/bash
 
-# this is a 2 node SLURM script using `torchrun` launcher
-# Important: you will need to adapt setting where you see EDIT in the comments
-
-#SBATCH --job-name=all-reduce-test
-#SBATCH --nodes=1
-#SBATCH --ntasks-per-node=1          # crucial - only 1 task per node
-#SBATCH --cpus-per-task=96           # EDIT this to how many cpu cores the node has
-#SBATCH --gres=gpu:8                 # EDIT this if it's not 8-gpus per node
+#SBATCH --job-name=nccl-launcher
+#SBATCH --nodes=8
+##SBATCH --nodelist=  # EDIT if you wnat to run on specific nodes, enter node names here
+#SBATCH --ntasks-per-node=1          
+#SBATCH --cpus-per-task=160           
+#SBATCH --gres=gpu:8                 
 #SBATCH --time=0:10:00               # EDIT the desired runtime
 #SBATCH --exclusive
-#SBATCH --partition=xyz-cluster      # EDIT to the desired partition name
+#SBATCH --partition=all      
 #SBATCH --output=%x-%j.out
 
 echo "START TIME: $(date)"
@@ -21,18 +19,15 @@ set -eo pipefail
 # logging script's variables/commands for future debug needs
 set -x
 
-cd /shared
-git clone https://github.com/mindhash/tir-samples.git
+# EDIT the python venv name here. not needed for this script if node has torch installed
+# source /shared/python_env/bin/activate
 
-cd /shared/tir-samples/distributed
+# its assumed that script will be placed under nccl-slurm folder in /shared drive along with all_reduce.py 
+cd /shared/nccl-slurm
 
-# EDIT the conda evn and any startup scripts
-# source /shared/my-project/.venv  # if you have something to preload before the job
-# conda activate stas-xxx        # if you have conda env to activate
+# main log is written here 
+LOG_PATH="main_log.txt"
 
-LOG_PATH="/shared/tir-samples/distributed/main_log.txt"
-
-# EDIT if it's not 8-gpus per node
 GPUS_PER_NODE=8
 NNODES=$SLURM_NNODES
 
@@ -40,39 +35,28 @@ NNODES=$SLURM_NNODES
 MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
 MASTER_PORT=6000
 
-# note `\$SLURM_PROCID` we don't want it interpolated till `srun` since otherwise all nodes will get
-# 0 and the launcher will hang
-#
-# same goes for `\$(hostname -s|tr -dc '0-9')` - we want it to interpolate at `srun` time
-LAUNCHER="python -u -m torch.distributed.run \
-    --nproc_per_node $GPUS_PER_NODE \
+LAUNCHER="python3 -u -m torch.distributed.run \
+    --nproc_per_node 1 \
     --nnodes $NNODES \
-    --node_rank \$SLURM_PROCID \
     --rdzv_endpoint $MASTER_ADDR:$MASTER_PORT \
     --rdzv_backend c10d \
-    --max_restarts 0 \
-    --role \$(hostname -s|tr -dc '0-9'): \
-    --tee 3 \
-    "
+    --max_restarts 0 "
+    
+# EDIT: location of python file if needed. The all_reduce.py is available here: https://github.com/mindhash/tir-samples/blob/master/distributed/all_reduce.py
+PROGRAM="/shared/nccl-slurm/all_reduce.py "
 
-# EDIT the path+name of the python script and whatever args it needs
-PROGRAM="/shared/tir-samples/distributed/all_reduce.py"
-
-export CMD="$LAUNCHER $PROGRAM"
+export CMD="export NCCL_DEBUG=INFO; export NCCL_SOCKET_IFNAME=eth0; export NCCL_NET=IB; export NCCL_IB_HCA=mlx5_0:1; $LAUNCHER $PROGRAM"
 
 echo $CMD
 
-# EDIT if you want to redirect /tmp to /shared (some local SSD path) since /tmp is tiny on compute nodes
-export TMPDIR=/shared/scratch
+# EDIT if you want to redirect /tmp to /scratch (some local SSD path) since /tmp is tiny on compute nodes
+# export TMPDIR=/scratch
 
-# EDIT: useful for debug if needed
-#
-# to debug NCCL issues
-# export NCCL_DEBUG=INFO
-#
+export NCCL_DEBUG=INFO
+
 # to unravel async errors w/o the correct traceback - potentially makes everything very slower
 # export CUDA_LAUNCH_BLOCKING=1
-#
+
 # to force crashing on nccl issues like hanging broadcast
 # export NCCL_ASYNC_ERROR_HANDLING=1
 
