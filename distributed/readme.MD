@@ -55,19 +55,8 @@ python -u -m torch.distributed.run \
 
 ### TIR Slurm Cluster
 
-```
-GPUS_PER_NODE=8
-NNODES=4
-MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
-MASTER_PORT=6000
-
-python -u -m torch.distributed.run \
-    --nproc_per_node $GPUS_PER_NODE \
-    --nnodes $NNODES \
-    --rdzv_endpoint $MASTER_ADDR:$MASTER_PORT \
-    --rdzv_backend c10d \
-    --max_restarts 0 \
-    --role `hostname -s`: \
-    --tee 3 \
-    all_reduce.py
-```
+Copy all_reduce.py and all_reduce.slurm to /shared/nccl-slurm folder on the cluster. 
+Change directory to /shared/nccl-slurm
+Run the slurm script with sbatch: sbatch all_reduce.slurm 
+See job progress: squeue
+Review results from the output file created by slurm in the same folder 
