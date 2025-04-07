@@ -9,7 +9,7 @@ Now, if you have confirmed that #1 is no the reason for failure, then do the fol
 2. The step 1 will generate additional log when your script runs. Capture the log and share it with support team. 
 3. If you are using slurm, then run the following steps to confirm the node communcation issue:
    ```
-   $ cd /tmp
+   $ cd /shared   ## this must shared/available on all the nodes 
    $ apt update && apt install git # optional 
    $ git clone https://github.com/mindhash/tir-samples
    $ cd tir-samples/distributed
