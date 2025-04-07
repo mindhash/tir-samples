@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=nccl-launcher
-#SBATCH --nodes=8
+#SBATCH --nodes=8   ## Edit based on no of ndoes 
 ##SBATCH --nodelist=  # EDIT if you wnat to run on specific nodes, enter node names here
 #SBATCH --ntasks-per-node=1          
 #SBATCH --cpus-per-task=160           
@@ -23,7 +23,7 @@ set -x
 # source /shared/python_env/bin/activate
 
 # its assumed that script will be placed under nccl-slurm folder in /shared drive along with all_reduce.py 
-cd /shared/nccl-slurm
+cd /shared/tir-samples
 
 # main log is written here 
 LOG_PATH="main_log.txt"
@@ -43,9 +43,9 @@ LAUNCHER="python3 -u -m torch.distributed.run \
     --max_restarts 0 "
     
 # EDIT: location of python file if needed. The all_reduce.py is available here: https://github.com/mindhash/tir-samples/blob/master/distributed/all_reduce.py
-PROGRAM="/shared/nccl-slurm/all_reduce.py "
+PROGRAM="/shared/tir-samples/distributed/all_reduce.py "
 
-export CMD="export NCCL_DEBUG=INFO; export NCCL_SOCKET_IFNAME=eth0; export NCCL_NET=IB; export NCCL_IB_HCA=mlx5_0:1; $LAUNCHER $PROGRAM"
+export CMD="export NCCL_DEBUG=INFO; export NCCL_SOCKET_IFNAME=eth0; export NCCL_NET=IB; $LAUNCHER $PROGRAM"
 
 echo $CMD
 
