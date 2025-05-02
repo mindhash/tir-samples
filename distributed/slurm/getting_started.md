@@ -125,6 +125,8 @@ $ python3 /opt/NeMo-Aligner/examples/nlp/data/steerlm/preprocess_openassistant_d
 
 ```
 $ huggingface-cli login --token <YOUR_HF_TOKEN>
+$ export HF_HOME=/shared/hf_cache
+$ huggingface-cli download meta-llama/Meta-Llama-3-8B
 $ python /opt/NeMo/scripts/checkpoint_converters/convert_llama_hf_to_nemo.py --input_name_or_path /shared/hf_cache/hub/models--meta-llama--Meta-Llama-3-8B/snapshots/8cde5ca8380496c9a6cc7ef3a8b46a0372a1d920 --output_path /shared/nemo_format/models/llama3-8b/mcore_gpt.nemo
 $ cd /shared/nemo_format/models/llama3-8b
 $ untar -xvf mcore_gpt.nemo
