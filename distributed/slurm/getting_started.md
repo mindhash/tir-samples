@@ -4,6 +4,17 @@
 
 ## Useful Commands 
 
+### Log into the node
+
+```
+ssh admin@<ip>
+```
+
+You can find the connect instructions from TIR dashboard. If you dont have access to TIR dashboard, contact your admin to setup your account. 
+
+<img width="860" alt="image" src="https://github.com/user-attachments/assets/dd7dbf19-7703-4f6a-8873-1a02db3bd4c9" />
+
+
 ### Check the node are up and active 
 ```
 sinfo 
