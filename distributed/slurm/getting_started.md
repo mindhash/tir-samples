@@ -114,7 +114,10 @@ ssh admin@<head-node-ip>
 ```
 
 ## Working with Nemo 
+TIR supports both Nemo 1.x and 2.x versions. Let us test llama3-8b SFT training example below. 
 
+Create a file `nemo-
+```
 
 
 
