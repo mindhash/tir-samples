@@ -116,9 +116,126 @@ ssh admin@<head-node-ip>
 ## Working with Nemo 
 TIR supports both Nemo 1.x and 2.x versions. Let us test llama3-8b SFT training example below. 
 
-Create a file `nemo-
+1. Download and pre-process sample data 
+```
+$ python3 /opt/NeMo-Aligner/examples/nlp/data/steerlm/preprocess_openassistant_data.py --output_directory=/shared/nemo/data
 ```
 
+2. Convert HF model to Nemo Format 
+
+```
+$ huggingface-cli login --token <YOUR_HF_TOKEN>
+$ python /opt/NeMo/scripts/checkpoint_converters/convert_llama_hf_to_nemo.py --input_name_or_path /shared/hf_cache/hub/models--meta-llama--Meta-Llama-3-8B/snapshots/8cde5ca8380496c9a6cc7ef3a8b46a0372a1d920 --output_path /shared/nemo_format/models/llama3-8b/mcore_gpt.nemo
+$ cd /shared/nemo_format/models/llama3-8b
+$ untar -xvf mcore_gpt.nemo
+```
+
+3. Create training script
+ 
+```
+$ vi /shared/nemo-llama3-8b-finetune.sh
+```
+
+4. Edit (no of nodes, dataset) and copy the following contents to nemo-llama3-8b-finetune.sh: 
+
+```
+#!/bin/bash
+
+#SBATCH -p all
+#SBATCH --nodes 1  
+#SBATCH -t 24:00:00
+#SBATCH -J llama3-8b-sft
+#SBATCH --ntasks-per-node=8
+#SBATCH --gpus-per-node=8
+#SBATCH --exclusive
+#SBATCH --overcommit
+#SBATCH --open-mode=append
+
+GPFS="/opt/NeMo-Aligner"
+
+TRAIN_DATA_PATH="/shared/nemo/data/oasst/train.jsonl"
+VALID_DATA_PATH="/shared/nemo/data/oasst/val.jsonl"
+
+
+PROJECT=WANDB_PROJECT # if you want to use wandb
+
+RESULTS_DIR="/shared/nemo/result_dir"
+
+OUTFILE="${RESULTS_DIR}/sft-%j-%t.out"
+ERRFILE="${RESULTS_DIR}/sft-%j-%t.err"
+mkdir -p ${RESULTS_DIR}
+
+
+read -r -d '' cmd <<EOF
+echo "*******STARTING********" \
+&& echo "---------------" \
+&& echo "Starting training" \
+&& cd ${GPFS} \
+&& export PYTHONPATH="${GPFS}:${PYTHONPATH}" \
+&& export HYDRA_FULL_ERROR=1 \
+&& export NCCL_SOCKET_IFNAME=eth0 \
+&& export NCCL_DEBUG=WARN \
+&& export NCCL_IB_MERGE_NICS=0 \
+&& export NEMO_CACHE_MODELS=/shared/hf_cache \
+&& export NEMO_CACHE_DIR=/shared/hf_cache \
+&& python -u ${GPFS}/examples/nlp/gpt/train_gpt_sft.py \
+   trainer.precision=bf16 \
+   trainer.num_nodes=${SLURM_JOB_NUM_NODES} \
+   trainer.devices=8 \
+   trainer.sft.max_steps=10000000 \
+   trainer.sft.limit_val_batches=0 \
+   trainer.sft.val_check_interval=10000 \
+   model.megatron_amp_O2=True \
+   model.tensor_model_parallel_size=8 \
+   model.resume_from_checkpoint=/shared/nemo/checkpoints \
+   model.optim.lr=5e-6 \
+   model.data.chat=True \
+   model.data.num_workers=0 \
+   model.data.train_ds.micro_batch_size=8 \
+   model.data.train_ds.global_batch_size=8 \
+   model.data.train_ds.file_path=${TRAIN_DATA_PATH} \
+   model.data.train_ds.max_seq_length=8064 \
+   model.data.validation_ds.micro_batch_size=8 \
+   model.data.validation_ds.global_batch_size=8 \
+   model.data.validation_ds.file_path=${VALID_DATA_PATH} \
+   model.data.validation_ds.max_seq_length=8064 \
+   exp_manager.create_wandb_logger=False \
+   exp_manager.explicit_log_dir=${RESULTS_DIR} \
+   exp_manager.wandb_logger_kwargs.project=${PROJECT} \
+   exp_manager.wandb_logger_kwargs.name=chat_sft_run \
+   exp_manager.resume_if_exists=True \
+   exp_manager.resume_ignore_no_checkpoint=True \
+   exp_manager.create_checkpoint_callback=True \
+   exp_manager.checkpoint_callback_params.save_nemo_on_train_end=True \
+   exp_manager.checkpoint_callback_params.monitor=validation_loss \
+   model.restore_from_path=/shared/nemo_format/models/llama3-8b \
+   +model.restore_from_ckpt=/shared/nemo_format/models/llama3-8b \
+   ++trainer.fast_dev_run=true 
+EOF
+
+# +trainer.fast_dev_run=True
+
+srun -o $OUTFILE -e $ERRFILE bash -c "${cmd}"
+set +x
+```
+6. Submit the slurm job
+
+```
+$ sbatch nemo-llama3-8b-finetune.sh
+```
+
+7. Monitor the job
+```
+$ squeue
+```
+
+8. Monitor the log
+```
+$ cd result_dir
+$ cat sft*_0.err
+$ cat sft*_0.out
+```
+ 
 
 
 
