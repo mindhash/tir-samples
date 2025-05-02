@@ -47,4 +47,28 @@ squeue
 scontrol show jobs 
 ```
 
+### Download/Sync datasets for training 
+
+```
+# Run the following command from your local system or VM (E2E or other providers). You can find the IP of training cluster from TIR dashboard in `Connect` section.  We recommend storing all your data and training scripts in /shared for persistence. Content stored anywhere else may not be persistent across restarts.  
+$ rsync /my-local/squad.jsonl admin@<ip>:/shared/data/
+```
+
+### Download model or dataset from HF 
+We recommend setting env variable `HF_HOME` to `/shared/hf_cache` before running the following command or any script that downloads models from HF. This will ensure, other nodes dont download the model or dataset again. 
+
+```
+pip install huggingface_hub
+hugginface-cli login --token <TOKEN>
+
+# model download 
+huggingface-cli download <MODEL>
+
+# dataset download 
+huggingface-cli download --repo-type <DATASET>
+```
+
+## Working with Nemo 
+
+
 
