@@ -406,7 +406,7 @@ set +x
 4. Submit the slurm job
 
 ```
-$ sbatch nemo-llama3-8b-finetune.sh
+$ sbatch asr_finetune.slurm
 ```
 
 5. Monitor the job
