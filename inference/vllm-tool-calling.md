@@ -22,6 +22,10 @@
 9. In Tokenizer setting, choose tokenizer mode as `mistral`
    <img width="881" alt="image" src="https://github.com/user-attachments/assets/45b9d395-d02c-4c64-991f-6d8eda7e16af" />
 
+10. Editing chat template: By default, mistral 3 uses [this](https://github.com/vllm-project/vllm/blob/main/examples/tool_chat_template_mistral3.jinja) chat template but if you want to edit or change it. You can copy the template and paste in text box shown below. 
+
+   <img width="913" alt="image" src="https://github.com/user-attachments/assets/b42ecf35-459c-4514-a8dd-f24cef2760da" />
+
 10. Thats it! follow the further step to deploy endpoint 
 
 11. Once the deployment is running, you can access api endpoint from **API Request** section. If you don't have auth token, you can create a new token in this section (API Request) as well.
