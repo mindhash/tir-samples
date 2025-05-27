@@ -44,7 +44,6 @@
 <img width="1195" alt="image" src="https://github.com/user-attachments/assets/9e726abb-0637-4b44-8720-e0d789caf14e" />
 
 4. Choose 2xH200 as it is minimum for LLAMA4-SCout-14B-16E
-<img width="874" alt="image" src="https://github.com/user-attachments/assets/146c9995-71b0-4b34-a429-c4bd0866a7fc" />
 5. Continue with Active worker as 1.
 6. In Image details section, enter the details below:
 - Image: registry.e2enetworks.net/aimle2e/vllm:0.9.0_v1
