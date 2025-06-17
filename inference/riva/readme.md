@@ -69,4 +69,21 @@ $ mc cp -r /home/jovyan/model-repository riva-models-dvdsfdsdvdsf/riva-dvdsfdsdv
    - Wait the endpoint comes to running state and then we are ready to launch Riva API server. 
 
 
+10. **Launch Riva API Server**:
+    - Go to TIR >> Inference >> Model Endpoints >> Create Endpoint
+    - Choose `Custom Container` as framework option 
+      <img width="421" alt="image" src="https://github.com/user-attachments/assets/1c98fa84-439b-464a-8bb8-fd5a4f27c91e" />
+
+    - Select Skip Model Download and continue
+      <img width="903" alt="image" src="https://github.com/user-attachments/assets/103149dc-0366-4e89-bc50-72b3c610f5c4" />
+
+    - Select a CPU plan this time as we have a separate server to handle model execution
+       <img width="915" alt="image" src="https://github.com/user-attachments/assets/3875d6d9-343a-434b-b2c0-62aa6f34928a" />
+    - Select active and max workers as 1 in next step
+    - In container configuration, enter `amole2e/riva-speech:2.19.0` as image. Click HTTP Port checkbox to confirm that we will run this service on 8080 port. Click on Advance Configuration and paste the following command: 
+    - Follow rest of the steps with appropriate options and launch the endpoint
+    - You can monitor the logs or deployment events and wait for the endpoint to come to running state
+    - Once the endpoint is running, we can now test the api with riva client 
+      
+
 
