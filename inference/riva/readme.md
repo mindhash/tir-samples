@@ -20,6 +20,23 @@ Riva support a long list of models. To serve them using triton server, we first 
 In this article, we will use a nvidia provided model that comes in .riva format. you can download it from [this link](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/riva/models/parakeet-ctc-riva-0-6b-en-us/files). It requires NGC login/signup.  
 5. Now that you have the model downloaded on your local, you can simply drag it to filebrowser in jupyter labs. It might take a while to upload full model. Jupyter labs doesnt show progress bar for larger files, so you may have to just match the file size on your local to what you see in labs file browser to confirm, the model upload is complete. Another method is to enable SSH on the tir node and use scp or rsync to upload this .riva model.
 
-6. 
+6. Edit and run the following command (from terminal) to convert .riva to .rmir format. This intermediate format that further gets converted to triton format.
+```
+$ export NGC_CLI_API_KEY=nvapi-xxx-set-your-key-here-you-can-get-it-from-nvidia-ngc-registry
+$ export NGC_CLI_ORG=set-org-here-you-can-get-it-from-ngc-registry
+
+$ riva-build speech_recognition /home/jovyan/hi-conformer-CTC-L-asr-set-3.0-riva-new-averaged.rmir  /home/jovyan/hi-conformer-CTC-L-asr-set-3.0-riva-new-averaged.riva  --decoder-type triton
+
+```
+If the command succeeds, you will find a new archive with .rmir extension in the file browser (jupyter labs)
+More options on riva-build can be found [here](https://docs.nvidia.com/deeplearning/riva/user-guide/docs/model-overview.html#riva-deploy)
+
+7. Lets build triton package now.
+
+```
+$ riva-deploy  /home/jovyan/hi-conformer-CTC-L-asr-set-3.0-riva-new-averaged.rmir  /home/jovyan/model-repository
+```
+
+8. 
 
 
