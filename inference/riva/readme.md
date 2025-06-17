@@ -108,5 +108,18 @@ $ mc cp -r /home/jovyan/model-repository riva-models-dvdsfdsdvdsf/riva-dvdsfdsdv
     - You can monitor the logs or deployment events and wait for the endpoint to come to running state
     - Once the endpoint is running, we can now test the api with riva client 
       
+After completion of all steps, you will have two endpoints running in TIR. One for RIVA Speech API and second for triton. You can scale these separately as desired.
+
+<img width="1194" alt="image" src="https://github.com/user-attachments/assets/97356c99-7312-4445-adbc-b922555aa003" />
+
+
+Do confirm from the logs if service is functional.
+
+RIVA Log:
+<img width="1149" alt="image" src="https://github.com/user-attachments/assets/a17a84bb-8e1a-4d06-a1bd-b90ea3cd96d8" />
+
+Triton log:
+<img width="1022" alt="image" src="https://github.com/user-attachments/assets/ef853599-1555-4f37-823a-ff6543330de2" />
+
 
 
