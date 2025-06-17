@@ -95,7 +95,10 @@ $ mc cp -r /home/jovyan/model-repository riva-models-dvdsfdsdvdsf/riva-dvdsfdsdv
       ```
       
       To get triton endpoint, go to the endpoint that we created in step 9. Identify the endpoint URL in overview tab (shown in screenshot below).  From the endpoint url, just pick the last endpoint id.
-      For e.g. if you see `https://infer.e2enetworks.net/project/p-23mmdfv0fff/endpoint/is-23d344f433` as your triton endpoint (created in step 9) then, riva server can interact with this service using `https://is-23d344f433`. The Riva command args in this case will look like: ["--asr_service=true", "--nlp_service=true", "--nmt_service=true", "--tts_service=true", "--triton_uri=https://is-23d344f433"]
+
+      For e.g.
+      * Triton Endpoint: `https://infer.e2enetworks.net/project/p-23mmdfv0fff/endpoint/is-23d344f433`  <- use last endpoint id
+      * Riva Command args: ["--asr_service=true", "--nlp_service=true", "--nmt_service=true", "--tts_service=true", "--triton_uri=http://is-23d344f433"]  
    
 
        <img width="981" alt="image" src="https://github.com/user-attachments/assets/4c68a8d7-841b-4899-b13f-c3a9c147b7e2" />
