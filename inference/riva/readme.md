@@ -76,6 +76,7 @@ $ mc cp -r /home/jovyan/model-repository riva-models-dvdsfdsdvdsf/riva-dvdsfdsdv
 10. **Launch Riva API Server**:
     - Go to TIR >> Inference >> Model Endpoints >> Create Endpoint
     - Choose `Custom Container` as framework option 
+
       <img width="421" alt="image" src="https://github.com/user-attachments/assets/1c98fa84-439b-464a-8bb8-fd5a4f27c91e" />
 
     - Select Skip Model Download and continue
