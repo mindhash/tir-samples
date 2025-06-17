@@ -90,7 +90,7 @@ $ mc cp -r /home/jovyan/model-repository riva-models-dvdsfdsdvdsf/riva-dvdsfdsdv
     - In container configuration, enter `amole2e/riva-speech:2.19.0` as image. Click HTTP Port checkbox to confirm that we will run this service on 8080 port. Click on Advance Configuration and paste the following command:
 
       ```
-      command: ["/etc/start-riva-with-multiple-triton.sh"]
+      command: ["riva_server"]
       args: ["--asr_service=true", "--nlp_service=true", "--nmt_service=true", "--tts_service=true", "--triton_uri=<get-this-from-triton-endpoint-more-details-below>"]
       ```
       
