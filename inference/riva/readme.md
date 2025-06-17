@@ -73,7 +73,7 @@ $ mc cp -r /home/jovyan/model-repository riva-models-dvdsfdsdvdsf/riva-dvdsfdsdv
    - Wait the endpoint comes to running state and then we are ready to launch Riva API server. 
 
 
-10. **Launch Riva API Server**:
+10. **Launch Riva Speech Service API**:
     - Go to TIR >> Inference >> Model Endpoints >> Create Endpoint
     - Choose `Custom Container` as framework option 
 
@@ -85,7 +85,17 @@ $ mc cp -r /home/jovyan/model-repository riva-models-dvdsfdsdvdsf/riva-dvdsfdsdv
     - Select a CPU plan this time as we have a separate server to handle model execution
        <img width="915" alt="image" src="https://github.com/user-attachments/assets/3875d6d9-343a-434b-b2c0-62aa6f34928a" />
     - Select active and max workers as 1 in next step
-    - In container configuration, enter `amole2e/riva-speech:2.19.0` as image. Click HTTP Port checkbox to confirm that we will run this service on 8080 port. Click on Advance Configuration and paste the following command: 
+    - In container configuration, enter `amole2e/riva-speech:2.19.0` as image. Click HTTP Port checkbox to confirm that we will run this service on 8080 port. Click on Advance Configuration and paste the following command:
+      command: ["/etc/start-riva-with-multiple-triton.sh"]
+      args: ["--asr_service=true", "--nlp_service=true", "--nmt_service=true", "--tts_service=true", "--triton_uri=<get-this-from-triton-endpoint-more-details-below>"]
+      
+      To get triton endpoint, go to the endpoint that we created in step 9. Identify the endpoint URL in overview tab (shown in screenshot below).  From the endpoint url, just pick the last endpoint id.
+      For e.g. if you see `https://infer.e2enetworks.net/project/p-23mmdfv0fff/endpoint/is-23d344f433` as your triton endpoint (created in step 9) then, riva server can interact with this service using `http://is-23d344f433`.
+   
+
+       <img width="981" alt="image" src="https://github.com/user-attachments/assets/4c68a8d7-841b-4899-b13f-c3a9c147b7e2" />
+
+      
     - Follow rest of the steps with appropriate options and launch the endpoint
     - You can monitor the logs or deployment events and wait for the endpoint to come to running state
     - Once the endpoint is running, we can now test the api with riva client 
