@@ -5,7 +5,10 @@
 
 1. Create separate instance to handle long (>5k) and short prompt (<5k). On client side, you can also do this with approximate character count.
 2. Use quantized versions whenever possible. Instead of full 70B, use FP8 version or INT4. When using INT4 version, don't use multiple GPUs. 
-4. First decide minimum GPUs you would need for best performance for the model. For e.g. INT4 runs best with a single H100 or H200. In this case, create an endpoint with single GPU. And then scale replicas. For FP8 version, 2 gpus offer good results, and for full  version 4 or 8. 
+4. First decide minimum GPUs you would need for best performance for the model. For e.g. INT4 runs best with a single H100 or H200. In this case, create an endpoint with single GPU. And then scale replicas. For FP8 version, 2 gpus offer good results, and for full LLAMA3  version 4 gpus are good start. Just adding more gpus to same replica will not offer throughput/latency improvements.  It is better to start with a replica with optimal gpu config and scale horizontally. In TIR, this would be just matter of increasing workers from `serverless configuration` tab.
+
+  <img width="1264" height="476" alt="image" src="https://github.com/user-attachments/assets/6193ffbc-8851-44ca-8f84-a0c4f0c4f1cb" />
+
 3. Optimise the request flow to the vllm endpoints. VLLM does not reject requests if max_seq_len is set to a high threshold. This also creates problem as VLLM will prioritise new requests. You will start noticing tail latency increase. as show below:
   <img width="754" height="220" alt="image" src="https://github.com/user-attachments/assets/c4bf27d8-dbc4-44d6-887f-6ba600828d44" />
 
