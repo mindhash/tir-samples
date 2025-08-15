@@ -1,4 +1,22 @@
 
+### Sample Autoscaling Config
+
+#### Sample Configuraton 1
+**Metric:** concurrent request 
+**Target Value:** 10
+**Initial Cooldown Period:** 900
+**Idle Timeout:** 900 
+
+With this in place, we are asking autoscaler to allow 10 concurrent requests to each replica.  
+
+Some scenarios to explain this further:
+
+1. Service receives 100 requests, current active replicas are 4
+       Action: Autoscaler will find out how many replicas are needed to process 100 requests (100/10). It will launch 6 more replicas to meet the demand. 
+
+2. ⁠Service receives 10 requests, current active replicas are 4. Min replica 4 
+       Action: Autoscaler will not perform any action. As min replica is 4. even if it knows you only need one replica to process 10 requests.  The requests are evenly distributed across 4 replicas. 
+
 
 ### Optimise Startup time when auto-scaling
 1. Reduce Model Download Time: 
