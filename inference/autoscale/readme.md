@@ -8,4 +8,4 @@
 3. Reduce Model loading to GPU time:
    - For vllm, You can also increase the max parallel loading workers to 4. This will allow load the models to gpus in parallel. Other inference engines may have a similar setting.
    - Using Cuda Checkpoint is an option for limited scenarios. It would work if you have a single gpu workload. Also requires special setup considerations. Please reach out to our team if you are a looking to go this route. 
-4. 
+
