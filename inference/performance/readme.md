@@ -24,7 +24,7 @@
 
 
 ## VLLM Specific Optimization
-- Set `VLLM_CACHE_ROOT=/mnt/models/.cache` to re-use torch compile and cuda graph compliled files. When this is set, you should see a message like below in the log. This means, on worker restarts the compile and cuda graph capture steps will be much quicker. 
+- In Endpoint, set the environment variable `VLLM_CACHE_ROOT=/mnt/models/.cache` to re-use torch compile and cuda graph compliled files. When this is set, you should see a message like below in the log. This means, on worker restarts the compile and cuda graph capture steps will be much quicker. 
 
 ```
 INFO 08-25 02:04:47 [backends.py:459] Using cache directory: /mnt/models/.cache/torch_compile_cache/50121da10f/rank_0_0 for vLLM's torch.compile
