@@ -21,3 +21,17 @@
    <img width="1244" height="639" alt="image" src="https://github.com/user-attachments/assets/a51aa30c-dfb4-47ff-a685-866730c31313" />
 
 5. Set long_prefix_threshold to 5000 for endpoints that process shorter prompts. This will ensure longer prompt even if it arrives at this endpoint, will not cause delay to regular requests.
+
+
+## Worker Restart Optimizations
+- Set `VLLM_CACHE_ROOT=/mnt/models/.cache` to re-use torch compile and cuda graph compliled files. When this is set, you should see a message like below in the log. This means, on worker restarts the compile and cuda graph capture steps will be much quicker. 
+
+```
+INFO 08-25 02:04:47 [backends.py:459] Using cache directory: /mnt/models/.cache/torch_compile_cache/50121da10f/rank_0_0 for vLLM's torch.compile
+```
+
+
+
+@
+
+@@
