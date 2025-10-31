@@ -1,5 +1,14 @@
 # Inference Optimisation stories 
 
+## 1. Introduction 
+- Real-world scaling across LLM, Stable Diffusion, ASR, and TTS
+- Goals: latency, throughput, GPU efficiency, cost per request
+- real-world challenges: streaming latency, unpredictable request rate, cold starts, burst traffic, multimodal pipelines
+
+## 2. Prompt-Level & Input Optimisations
+  Reduce model work before it begins
+
+- **kv-Reuse**: It is often easy to overlook simple solutions when optimising any peice of software. The most expensive operation in LLMs is KV Calcuation. It is unavoidable. You don't want to repeat it. Every inference engine like vLLM, tensor-rt LLM understands it and provides a reuse mechanism. When we observed endpoint metrics, there was hardly any kv cache hits. 
 
 ## Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
 
