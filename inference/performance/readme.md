@@ -1,5 +1,9 @@
+# Tools & Tricks to Optimise Model Inference  
 
-
+## Introduction 
+- Real-world scaling across LLM, Stable Diffusion, ASR, and TTS
+- Goals: latency, throughput, GPU efficiency, cost per request
+- real-world challenges: streaming latency, unpredictable request rate, cold starts, burst traffic, multimodal pipelines
 
 ## Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
 
