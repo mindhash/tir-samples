@@ -2,7 +2,7 @@
 
 ## 1. Introduction 
 - Real-world scaling across LLM, Stable Diffusion, ASR, and TTS
-- Goals: latency, throughput, GPU efficiency, cost per request
+- Goals: latency (TTFT/ITL/E2E), throughput, GPU efficiency, cost per request
 - real-world challenges: streaming latency, unpredictable request rate, cold starts, burst traffic, multimodal pipelines
 
 ## 2. Inference Engines
@@ -29,6 +29,13 @@
   Request-level Inference is state-less shared nothing architecture. This helps us optimise engine like vLLM in isolation and scale horizontally without any drop in performance (assuming network routing and load balancing works as expected).  
 
 ### Model Selection and GPU sizing 
+- Choose FP8 version almost every time. If you have concerns around quality, generate a fp8 version by using your samples. If not, AWQ on average generally performs well. 
+- The layout of GPU memory need for inference can be split into (static) and (dynamic) parts. The static part curresponds to overall memory used to store model and some functional elements around it. The dynamic part covers the per request memory requirement.
+  
+  * static: (model size in parameters * bytes per parameter)
+  * per request: (prompt + generated tokens * 0.5MB to 1 MB per token) 
+
+- When working with text based inference, per request memory is really important as it can help decide the no of requests engine can process at once. It can also impact the latency. For example, if you ask vLLM to load entire free space e.g. 80GB with requests before every batch iteration, you will experience with a higher TTFT (time to first token) request latency. So if TTFT is important to you, optimise for a batched tokens to match your latency requirement. On the other hand, if throughput is important (total tokens gpu generates per second) then go ahead and load up entire gpu before each iteration to utilise complete capacity(TFLOPS) of gpu.  
 
 ### Batching 
   - Control Batch Size: 
@@ -40,10 +47,10 @@
 ### Throughput 
 
 ### Start-up time for Auto-scaling  
+The key components of startup are often amoung -> `Model Download`, `Load Model to GPU`, `Torch Compile`, and `Cuda Graph` calculation 
 - Use a local peristent model cache to avoid repeated model downloads on restarts. TIR uses a shared drive to support model persistence.
 - Look into setting specific [Cuda graph](https://docs.vllm.ai/en/latest/design/cuda_graphs.html#cudagraphmodes) you need.
-- Optimise torch compile time by storing compiled files to persistent location. In TIR, this is /mnt/models 
-
+- Optimise torch compile time by storing compiled files to persistent location. In TIR, this is /mnt/models
 
 ## 3. Request routing 
 
