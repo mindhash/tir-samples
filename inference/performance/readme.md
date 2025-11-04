@@ -30,13 +30,14 @@
 
 ### Start-up time 
 
-### Batching / Throughput 
+### Batching 
   - Control Batch Size: 
 
 ### TTFT
 
 ### End-to-End Latency 
 
+### Throughput 
 
 ## Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
 
