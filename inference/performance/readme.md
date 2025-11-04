@@ -1,4 +1,4 @@
-# Inference Optimisation stories 
+# Inference Optimisation Strategies 
 
 ## 1. Introduction 
 - Real-world scaling across LLM, Stable Diffusion, ASR, and TTS
@@ -28,8 +28,6 @@
 ## 3. Optimise vLLM Engine
   Request-level Inference is state-less shared nothing architecture. This helps us optimise engine like vLLM in isolation and scale horizontally without any drop in performance (assuming network routing and load balancing works as expected).  
 
-### Start-up time 
-
 ### Model Selection and GPU sizing 
 
 ### Batching 
@@ -40,6 +38,12 @@
 ### End-to-End Latency 
 
 ### Throughput 
+
+### Start-up time for Auto-scaling  
+- Use a local peristent model cache to avoid repeated model downloads on restarts. TIR uses a shared drive to support model persistence.
+- Look into setting specific [Cuda graph](https://docs.vllm.ai/en/latest/design/cuda_graphs.html#cudagraphmodes) you need.
+- Optimise torch compile time by storing compiled files to persistent location. In TIR, this is /mnt/models 
+
 
 ## 3. Request routing 
 
