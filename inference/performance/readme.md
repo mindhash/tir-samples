@@ -14,7 +14,7 @@
   1. Use MIG to launch multiple containers on same gpu. You can go upto 7 parallel inference servers on same GPU. This is supported with full node access only. 
   2. In such cases, batching can only be done through multi-processing. Don't re-invent the wheel. Triton supports multiple instances option which can spawn several python processes with separate cuda stream. This is best option to leverage gpu capabilities in parallel. If you are thinking - I will use multi-threading - then don't. Multi-threading does not guarantee parallel execution on gpu. 
 - If you are constrainted by option # 2, go with triton server. Convert your model to ONNX format for best results and performance.
-- Lastly consider building your own flask or fast api to handle model inference. In this case, ensure your processing engine can run in its own python process (explore python multi-processing module). Use a queue to send async requests from flask POST method to processing engine.  
+- As a last option, consider building your own flask or fast api to handle model inference. In this case, ensure your processing engine can run in its own python process (explore python multi-processing module). Use a queue to send async requests from flask POST method to processing engine.  
   
 ## 2. Prompt-Level & Input Optimisations  
   Reduce model work before it begins. 
