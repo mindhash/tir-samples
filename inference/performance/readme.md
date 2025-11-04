@@ -28,7 +28,7 @@
 ## 3. Optimise vLLM Engine
   Request-level Inference is state-less shared nothing architecture. This helps us optimise engine like vLLM in isolation and scale horizontally without any drop in performance (assuming network routing and load balancing works as expected).  
 
-### Model Selection and GPU sizing 
+### Model Selection and GPU Memory Sizing 
 - Choose FP8 version almost every time. If you have concerns around quality, generate a fp8 version by using your samples. If not, AWQ on average generally performs well. 
 - The layout of GPU memory need for inference can be split into (static) and (dynamic) parts. The static part curresponds to overall memory used to store model and some functional elements around it. The dynamic part covers the per request memory requirement.
   
@@ -38,7 +38,9 @@
 - When working with text based inference, per request memory is really important as it can help decide the no of requests engine can process at once. It can also impact the latency. For example, if you ask vLLM to load entire free space e.g. 80GB with requests before every batch iteration, you will experience with a higher TTFT (time to first token) request latency. So if TTFT is important to you, optimise for a batched tokens to match your latency requirement. On the other hand, if throughput is important (total tokens gpu generates per second) then go ahead and load up entire gpu before each iteration to utilise complete capacity(TFLOPS) of gpu.  
 
 ### Batching 
-  - Control Batch Size: 
+vLLM doesn't have a direct configuration to set batch size but it provides a few knobs to control request scheduling.
+- num sequences: This controls the no of requests can be scheduled together at once through a batch iteration. The larger no will allow more requests to be grouped together for processing but also impact TTFT. The best way to arrive at right value for this parameter would be to run bechmarking scripts (like vllm bench, genAi Perf) to see compare latencies. The default is 256 but we recommend starting with 64 for prompt inputs > 3k. 
+- num batched tokens: 
 
 ### TTFT
 
