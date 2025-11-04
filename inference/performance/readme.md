@@ -7,7 +7,11 @@
 
 ## 2. Inference Engines
 - First and foremost - use an inference engine like vLLM or Triton + TensorRT-LLM whenever possible. Its a no-brainer as these engines support `continous batching`. The idea of continous batching is simple - Inference goes through a series of forward passes through a neural network. Continous batching will allow processing requests together even if they dont arrive at the same time. 
-- 
+- While contious batching is the best thing there is, for some generative cases like image (stable diffusion), audio (ASR or TTS), this may not be always an option. This is for 2 reasons: (i) if you are working with open source model which doesn't have a batch dimention (ii) vLLM does not support your model.
+- If you are constrained by option # 1 above, you have 3 options:
+  1. Use MIG to launch multiple containers on same gpu. You can go upto 7 parallel inference servers on same GPU. This is supported with full node access only. 
+  2. In such cases, batching can only be done through multi-processing. Don't re-invent the wheel. Triton supports multiple instances option which can spawn several python processes with separate cuda stream. This is best option to leverage gpu capabilities in parallel. If you are thinking - I will use multi-threading - then don't. Multi-threading does not guarantee parallel execution on gpu. 
+- If you are constrainted by option # 2, go with triton server. Convert your model to ONNX format for best results and performance. 
 ## 2. Prompt-Level & Input Optimisations
   Reduce model work before it begins
 
