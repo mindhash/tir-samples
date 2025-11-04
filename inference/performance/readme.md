@@ -5,6 +5,9 @@
 - Goals: latency, throughput, GPU efficiency, cost per request
 - real-world challenges: streaming latency, unpredictable request rate, cold starts, burst traffic, multimodal pipelines
 
+## 2. Inference Engines
+- First and foremost - use an inference engine like vLLM or Triton + TensorRT-LLM whenever possible. Its a no-brainer as these engines support `continous batching`. The idea of continous batching is simple - Inference goes through a series of forward passes through a neural network. Continous batching will allow processing requests together even if they dont arrive at the same time. 
+- 
 ## 2. Prompt-Level & Input Optimisations
   Reduce model work before it begins
 
