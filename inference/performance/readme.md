@@ -25,9 +25,19 @@
   - Organize your prompts in this manner - <static system prompt> <static part of user prompt e.g. part that doesnt change often across similar type of requests> <dynamic part of user prompt e.g. variables, facts etc>. This will ensure maximum kv re-use. 
   - Minimise dynamic part of prompts. This is easier said than done.  Developers are often responsible for writing prompts and performance is often kept as a last bite to chew. You will need to keep tracking prompts in your production and run a simple cluster algo to see how spread out your prompts are.  
 
-## 3. Optimise Engine
-  Request-level Inference is state-less shared nothing architecture. This helps us optimise engine like vLLM in isolation and scale horizontally without any drop in performance (assuming network routing and load balancing works as expected). 
-  
+## 3. Optimise vLLM Engine
+  Request-level Inference is state-less shared nothing architecture. This helps us optimise engine like vLLM in isolation and scale horizontally without any drop in performance (assuming network routing and load balancing works as expected).  
+
+### Start-up time 
+
+### Batching / Throughput 
+  - Control Batch Size: 
+
+### TTFT
+
+### End-to-End Latency 
+
+
 ## Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
 
 1. Create separate instance to handle long (>5k) and short prompt (<5k). On client side, you can also do this with approximate character count.
