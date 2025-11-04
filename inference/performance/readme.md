@@ -16,10 +16,13 @@
 - If you are constrainted by option # 2, go with triton server. Convert your model to ONNX format for best results and performance.
 - Lastly consider building your own flask or fast api to handle model inference. In this case, ensure your processing engine can run in its own python process (explore python multi-processing module). Use a queue to send async requests from flask POST method to processing engine.  
   
-## 2. Prompt-Level & Input Optimisations
-  Reduce model work before it begins
+## 2. Prompt-Level & Input Optimisations  
+  Reduce model work before it begins. 
 
-- **kv-Reuse**: It is often easy to overlook simple solutions when optimising any peice of software. The most expensive operation in LLMs is KV Calcuation. It is unavoidable. You don't want to repeat it. Every inference engine like vLLM, tensor-rt LLM understands it and provides a reuse mechanism. When we observed endpoint metrics, there was hardly any kv cache hits. 
+  Note: This section will mostly fit for transformer based inference. 
+
+  - **kv-reuse**: It is often easy to overlook simple solutions when optimising any peice of software. The most expensive operation in LLMs is KV Calcuation. It is unavoidable. You don't want to repeat it. Every inference engine like vLLM, tensor-rt LLM understands it and provides a reuse mechanism.  Enable prefix_caching to re-use kv within or across requests. This only works when your requests share first few sentencese in prompts which is often the case for multi-turn conversations. vLLM uses a hash function to determine if two sentences are alike and decide if kv tensors can be re-used
+  -  
 
 ## Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
 
