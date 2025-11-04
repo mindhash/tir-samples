@@ -31,6 +31,7 @@
 ### Start-up time 
 
 ### Model Selection and GPU sizing 
+
 ### Batching 
   - Control Batch Size: 
 
@@ -42,7 +43,10 @@
 
 ## 3. Request routing 
 
-## Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
+
+
+## Case studies and Examples 
+### Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
 
 1. Create separate instance to handle long (>5k) and short prompt (<5k). On client side, you can also do this with approximate character count.
 2. Use quantized versions whenever possible. Instead of full 70B, use FP8 version or INT4. When using INT4 version, don't use multiple GPUs. 
