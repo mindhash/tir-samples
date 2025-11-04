@@ -30,6 +30,7 @@
 
 ### Start-up time 
 
+### Model Selection and GPU sizing 
 ### Batching 
   - Control Batch Size: 
 
@@ -38,6 +39,8 @@
 ### End-to-End Latency 
 
 ### Throughput 
+
+## 3. Request routing 
 
 ## Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
 
