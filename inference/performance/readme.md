@@ -24,6 +24,9 @@
   - **kv-reuse**: When optimising, major gains often come from not having to do some things. The most expensive operation in LLMs is KV Calcuation. It is unavoidable. But you don't want to repeat it. Every inference engine like vLLM, tensor-rt LLM understands it and provides a reuse mechanism.  Enable prefix_caching to re-use kv within or across requests. This only works when your requests share first few sentencese in prompts which is often the case for multi-turn conversations. vLLM uses a hash function to determine if two sentences are alike and decide if kv tensors can be re-used.
   - Organize your prompts in this manner - <static system prompt> <static part of user prompt e.g. part that doesnt change often across similar type of requests> <dynamic part of user prompt e.g. variables, facts etc>. This will ensure maximum kv re-use. 
   - Minimise dynamic part of prompts. This is easier said than done.  Developers are often responsible for writing prompts and performance is often kept as a last bite to chew. You will need to keep tracking prompts in your production and run a simple cluster algo to see how spread out your prompts are.  
+
+## 3. Optimise Engine
+  Request-level Inference is state-less shared nothing architecture. This helps us optimise engine like vLLM in isolation and scale horizontally without any drop in performance (assuming network routing and load balancing works as expected). 
   
 ## Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
 
