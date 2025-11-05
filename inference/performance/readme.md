@@ -28,6 +28,9 @@
 ## 3. Optimise vLLM Engine
   Request-level Inference is state-less shared nothing architecture. This helps us optimise engine like vLLM in isolation and scale horizontally without any drop in performance (assuming network routing and load balancing works as expected).  
 
+### Running and Waiting Requests
+Before you consider optimising vLLM, ensure that the engine has sufficient requests to process. In TIR, you can use `monitoring tab >> Service` section to review graphs of running and waiting requests. Ideally, you should see zero waiting requests for TTFT (time to first token) latency goal and atleast 20% of running requests for throughput (max tokens/sec) goal.   
+
 ### Model Selection and GPU Memory Sizing 
 - Choose FP8 version almost every time. If you have concerns around quality, generate a fp8 version by using your samples. If not, AWQ on average generally performs well. 
 - The layout of GPU memory need for inference can be split into (static) and (dynamic) parts. The static part curresponds to overall memory used to store model and some functional elements around it. The dynamic part covers the per request memory requirement.
