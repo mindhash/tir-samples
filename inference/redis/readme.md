@@ -30,3 +30,21 @@
 
 
 Once done, please reach out to TIR Support team to disable public access (HTTP) and enable local port access in namespace. This is a temporary solution, the feature to run redis with one-click launch will be available soon. 
+To acces redis:-
+1. install redis client
+   ```
+   pip install redis
+   ```
+2. Access it using private client(only accessible in same project)
+   ```
+   import redis
+   r = redis.Redis(
+       host='private-endpoint',  eg: is-1234
+       port=80,
+       decode_responses=True
+   )
+   r.set("greeting", "hello from python in k8s")
+   value = r.get("greeting")
+   print("Stored value:", value)
+   ```
+
