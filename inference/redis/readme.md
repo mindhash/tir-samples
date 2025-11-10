@@ -35,7 +35,7 @@ To acces redis:-
    ```
    pip install redis
    ```
-2. Access it using private client(only accessible in same project)
+2. Access it using private endpoint(only accessible in same project)
    ```
    import redis
    r = redis.Redis(
