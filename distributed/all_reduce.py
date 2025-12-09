@@ -84,7 +84,7 @@ N = 500000
 M = 2000
 
 def timed_allreduce(mat, start_event, end_event):
-    dist.barrier()
+    ## dist.barrier()
     start_event.record()
     dist.all_reduce(mat)
     end_event.record()
