@@ -36,7 +36,7 @@ MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
 MASTER_PORT=6000
 
 LAUNCHER="python3 -u -m torch.distributed.run \
-    --nproc_per_node 1 \
+    --nproc_per_node 8 \
     --nnodes $NNODES \
     --rdzv_endpoint $MASTER_ADDR:$MASTER_PORT \
     --rdzv_backend c10d \
