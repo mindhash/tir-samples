@@ -1,7 +1,68 @@
-# Inference Optimisation stories 
+# Inference Optimisation Strategies 
+
+## 1. Introduction 
+- Real-world scaling across LLM, Stable Diffusion, ASR, and TTS
+- Goals: latency (TTFT/ITL/E2E), throughput, GPU efficiency, cost per request
+- real-world challenges: streaming latency, unpredictable request rate, cold starts, burst traffic, multimodal pipelines
+
+## 2. Inference Engines
+- First and foremost - use an inference engine like vLLM or Triton + TensorRT-LLM whenever possible. Its a no-brainer as these engines support `continous batching`. The idea of continous batching is simple - Inference goes through a series of forward passes through a neural network. Continous batching will allow processing requests together even if they dont arrive at the same time. 
+- While contious batching is the best thing there is, for some generative cases like image (stable diffusion), audio (ASR or TTS), this may not be always an option. This is for 2 reasons:
+  (i) if you are working with open source model which doesn't have a batch dimention
+  (ii) vLLM does not support your model.
+- If you are constrained by option # 1 above, you have 3 options:
+  1. Use MIG to launch multiple containers on same gpu. You can go upto 7 parallel inference servers on same GPU. This is supported with full node access only. 
+  2. In such cases, batching can only be done through multi-processing. Don't re-invent the wheel. Triton supports multiple instances option which can spawn several python processes with separate cuda stream. This is best option to leverage gpu capabilities in parallel. If you are thinking - I will use multi-threading - then don't. Multi-threading does not guarantee parallel execution on gpu. 
+- If you are constrainted by option # 2, go with triton server. Convert your model to ONNX format for best results and performance.
+- As a last option, consider building your own flask or fast api to handle model inference. In this case, ensure your processing engine can run in its own python process (explore python multi-processing module). Use a queue to send async requests from flask POST method to processing engine.  
+  
+## 2. Prompt-Level & Input Optimisations  
+  Reduce model work before it begins. 
+
+  Note: This section will mostly fit for transformer based inference. 
+
+  - **kv-reuse**: When optimising, major gains often come from not having to do some things. The most expensive operation in LLMs is KV Calcuation. It is unavoidable. But you don't want to repeat it. Every inference engine like vLLM, tensor-rt LLM understands it and provides a reuse mechanism.  Enable prefix_caching to re-use kv within or across requests. This only works when your requests share first few sentencese in prompts which is often the case for multi-turn conversations. vLLM uses a hash function to determine if two sentences are alike and decide if kv tensors can be re-used.
+  - Organize your prompts in this manner - <static system prompt> <static part of user prompt e.g. part that doesnt change often across similar type of requests> <dynamic part of user prompt e.g. variables, facts etc>. This will ensure maximum kv re-use. 
+  - Minimise dynamic part of prompts. This is easier said than done.  Developers are often responsible for writing prompts and performance is often kept as a last bite to chew. You will need to keep tracking prompts in your production and run a simple cluster algo to see how spread out your prompts are.  
+
+## 3. Optimise vLLM Engine
+  Request-level Inference is state-less shared nothing architecture. This helps us optimise engine like vLLM in isolation and scale horizontally without any drop in performance (assuming network routing and load balancing works as expected).  
+
+### Running and Waiting Requests
+Before you consider optimising vLLM, ensure that the engine has sufficient requests to process. In TIR, you can use `monitoring tab >> Service` section to review graphs of running and waiting requests. Ideally, you should see zero waiting requests for TTFT (time to first token) latency goal and atleast 20% of running requests for throughput (max tokens/sec) goal.   
+
+### Model Selection and GPU Memory Sizing 
+- Choose FP8 version almost every time. If you have concerns around quality, generate a fp8 version by using your samples. If not, AWQ on average generally performs well. 
+- The layout of GPU memory need for inference can be split into (static) and (dynamic) parts. The static part curresponds to overall memory used to store model and some functional elements around it. The dynamic part covers the per request memory requirement.
+  
+  * static: (model size in parameters * bytes per parameter)
+  * per request: (prompt + generated tokens * 0.5MB to 1 MB per token) 
+
+- When working with text based inference, per request memory is really important as it can help decide the no of requests engine can process at once. It can also impact the latency. For example, if you ask vLLM to load entire free space e.g. 80GB with requests before every batch iteration, you will experience with a higher TTFT (time to first token) request latency. So if TTFT is important to you, optimise for a batched tokens to match your latency requirement. On the other hand, if throughput is important (total tokens gpu generates per second) then go ahead and load up entire gpu before each iteration to utilise complete capacity(TFLOPS) of gpu.  
+
+### Batching 
+vLLM doesn't have a direct configuration to set batch size but it provides a few knobs to control request scheduling.
+- num sequences: This controls the no of requests can be scheduled together at once through a batch iteration. The larger no will allow more requests to be grouped together for processing but also impact TTFT. The best way to arrive at right value for this parameter would be to run bechmarking scripts (like vllm bench, genAi Perf) to see compare latencies. The default is 256 but we recommend starting with 64 for prompt inputs > 3k. 
+- num batched tokens: 
+
+### TTFT
+
+### End-to-End Latency 
+
+### Throughput 
+
+### Start-up time for Auto-scaling  
+The key components of startup are often amoung -> `Model Download`, `Load Model to GPU`, `Torch Compile`, and `Cuda Graph` calculation 
+- Use a local peristent model cache to avoid repeated model downloads on restarts. TIR uses a shared drive to support model persistence.
+- Look into setting specific [Cuda graph](https://docs.vllm.ai/en/latest/design/cuda_graphs.html#cudagraphmodes) you need.
+- Optimise torch compile time by storing compiled files to persistent location. In TIR, this is /mnt/models
+
+## 3. Request routing 
 
 
-## Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
+
+## Case studies and Examples 
+### Scaling vLLM Inference Throughput/Latency for mixed lengths request (input tokens varying from 1000 to 20000 and generations 100-2000)
 
 1. Create separate instance to handle long (>5k) and short prompt (<5k). On client side, you can also do this with approximate character count.
 2. Use quantized versions whenever possible. Instead of full 70B, use FP8 version or INT4. When using INT4 version, don't use multiple GPUs. 
