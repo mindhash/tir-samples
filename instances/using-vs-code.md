@@ -44,7 +44,7 @@ Choose Gradio option
 
 When done, your instance will allow any application running on 7860 to be accessible in browser. 
 
-<img width="977" height="100" alt="image" src="https://github.com/user-attachments/assets/886ef578-fcbe-43a6-95b0-1bfe3c91faa6" />
+<img width="538" height="119" alt="image" src="https://github.com/user-attachments/assets/ecd80136-5cd2-4161-91e1-3c3f8504873a" />
 
 The URL will also be displayed in Add ons section. 
 
