@@ -5,16 +5,18 @@
 When benchmarking on gpu performance, it is important to focus just on inference latency. This offers a comparable view across different gpus and providers. 
 
 #### steps
-1. Start a new cpu instance in TIR. Choose the `transformers` environment.
+1. Start a new gpu instance in TIR. Choose the `vllm` environment.
    <img width="825" height="761" alt="image" src="https://github.com/user-attachments/assets/cad05293-052c-455e-b785-47e61484319c" />
 
-2. Start a terminal and Install vllm (0.12.0). The vllm version here should ideally match with the version selected during creation of inference endpoint in TIR
+2. Start a terminal. Set HF token
    ```
-   $ pip install vllm==v0.12.0
+   $ huggingface-cli login --token  <your-token-here>
    ```
-2. In terminal, checkout vllm(0.12.0) version
+   
+2. In terminal, run the benchmark 
 ```
-$ git clone https://github.com/vllm-project/vllm.git --branch v0.12.0
-$ cd vllm
+$ vllm bench serve  --model google/gemma-3-27b-it  --random-input-len 1000 --random-output-len 1000 --random-batch-size 4 --base-url  <tir-endpoint-http-full-path e.g https://infer.e2enetworks.net/project/p-f3r34r/endpoint/is-d3234324d/ 
+> --header x-auth-token=<tir-auth-token-here.e.g.-eyjgkv..>
 ```
-3. 
+
+
