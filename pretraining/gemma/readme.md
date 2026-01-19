@@ -41,6 +41,13 @@ Please note you may have to find and set the correct IB devices by running in pr
 $ ibv_devinfo | sed -n -e '/hca_id/p' -e '/link_layer:/p' | grep -B1 InfiniBand | grep hca_id | sed -e 's/^hca_id://g' | tr -d '[[:blank:]]' | sed 's/$/:1/' | paste -sd ","
 ```
 
+### Run Slurm Job
+
+```
+## The job will run on 2 nodes. To increase the no of nodes, edit nodes in pretrain_gemma3.sh and gemma3_pretrain.py (trainer config). 
+$ sbatch pretrain_gemma3.sh 
+```
+
 
 
 
