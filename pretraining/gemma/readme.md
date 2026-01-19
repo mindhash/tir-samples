@@ -33,4 +33,14 @@ if __name__ == '__main__':
 ```
 
 
+### Copy training scripts
+Copy the two scripts (`gemma3_pretrain.py` and `pretrain_gemma3.sh`) to `/pfs/pretraining` directory. The script is set for continual pretraining. So it will allow progress from current base model `gemma3-4b-pt`. 
+
+Please note you may have to find and set the correct IB devices by running in pretrain_gemma3.sh using the following command. 
+```
+$ ibv_devinfo | sed -n -e '/hca_id/p' -e '/link_layer:/p' | grep -B1 InfiniBand | grep hca_id | sed -e 's/^hca_id://g' | tr -d '[[:blank:]]' | sed 's/$/:1/' | paste -sd ","
+```
+
+
+
 
