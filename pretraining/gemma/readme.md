@@ -5,6 +5,18 @@
 Launch a new training cluster with Slurm-Nemo 25.07 image 
 
 ### Convert to Nemo Format 
+Set HF tokeb first:
+```
+$ huggingface-cli login --token <TOKEN_HERE>
+
+# Following assumes you have mounted PFS (Parallel File system) or SFS on /pfs location.  It will set HF Cache to a common folder on shared directory. 
+$ export HF_HOME=/pfs/hf
+
+# following will set nemo hub such that converted nemo checkpoints will be stored in this directory 
+$ export NEMO_CACHE_HOME=/pfs/nemo_hub
+```
+
+
 Run the following script to convert **Gemma-4b-pt** to Nemo format. 
 
 ```
@@ -19,4 +31,6 @@ if __name__ == '__main__':
         source=f"hf://{hf_model_id}",
     )
 ```
+
+
 
