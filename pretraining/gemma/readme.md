@@ -49,5 +49,10 @@ $ sbatch pretrain_gemma3.sh
 ```
 
 
+### Add custom Dataset
+In the gemma_pretrain.py replace llm.MockDataModule with llm.PretrainDataModule
+ 
+
+More details on creating mmap files and PretrainDataModule can be found here [here](https://docs.nvidia.com/nemo-framework/user-guide/25.09/data/pretrain_data.html) and [here](https://github.com/NVIDIA-NeMo/NeMo/blob/e660cd227a09e7818fd622d99f0c75a4d3938d01/nemo/collections/llm/gpt/data/pre_training.py#L113)
 
 
